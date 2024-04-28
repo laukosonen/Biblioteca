@@ -28,4 +28,9 @@ public class Comedia extends Libro {
         super.mostrarDatos();
         System.out.println("Tipo de humor = " + tipoHumor);
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

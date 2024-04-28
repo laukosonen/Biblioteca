@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 /* Esta clase hereda de la clase Libro porque es un tipo de dicha clase, hereda sus atributos y su método de mostrar los datos  */
@@ -45,5 +46,10 @@ public class Policiaca extends Libro{
             System.out.println(personajes[i]);
         }
         System.out.println("Trama = " + trama);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

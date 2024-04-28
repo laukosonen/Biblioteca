@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /*Creamos la clase Biblioteca, que será nuestro controller pues a través de ella podremos hacer todas las funcionalidades relacionadas con
-* la biblioteca*/
-public class Biblioteca {
+* la biblioteca. La establecemos como genérica extendiendo de Libro para que restrinja el tipo de libro que queramos registrar según el tipo
+* de biblioteca creada (gernérica o especializada en algún género) */
+public class Biblioteca<T extends Libro> {
 
     /*Declaramos sus atributos, entre ellos estarán las clase anidada Catálogo porque el catálogo depende de la biblioteca para existir y también
     * hemos establecido un array de libros que usaremos a modo de array auxiliar al catálogo cuando sepamos la capacidad del catálogo*/
-    private String nombre,director;
+    private String nombre, director;
     private Catalogo catalogo;
-    private Libro[]arrayCatalogo;
 
     /*Agregamos el constructor vacío, otro con los atributos nombre de la biblioteca y director de la bibilioteca y todos los getter y setter*/
     public Biblioteca() {
@@ -23,6 +23,7 @@ public class Biblioteca {
         this.nombre = nombre;
         this.director = director;
     }
+
     public String getNombre() {
         return nombre;
     }
@@ -47,14 +48,6 @@ public class Biblioteca {
         this.catalogo = catalogo;
     }
 
-    public Libro[] getArrayCatalogo() {
-        return arrayCatalogo;
-    }
-
-    public void setArrayCatalogo(Libro[] arrayCatalogo) {
-        this.arrayCatalogo = arrayCatalogo;
-    }
-
     //Método que muestra datos de la biblioteca:
     public void mostrarDatos(){
         System.out.println("Nombre = " + nombre);
@@ -63,12 +56,11 @@ public class Biblioteca {
     /*Método que construye el catálogo creando un nuevo arrayList con objetos de tipo Libro y un array estático del tamaño del número de libros
     pasado por parámetro*/
     public void construirCatalogo(int numeroLibros){
-        arrayCatalogo=new Libro[numeroLibros];
         this.catalogo=new Catalogo();
         System.out.println("Catálogo creado");
     }
     //Método para añadir al catálogo los 4 primeros libros que nos pide el enunciaco crear
-    public void registroLibrosIniciales(Libro libro)
+    public void registroLibrosIniciales(T libro)
     {
         catalogo.listaLibros.add(libro);
     }
@@ -77,7 +69,7 @@ public class Biblioteca {
     public int consultarNumeroLibrosCatalogo(){
 
         int librosEnCatalogo=0;
-        for (Libro item: getCatalogo().listaLibros)
+        for (T item: catalogo.listaLibros)
         {
             if (item!=null)
             {
@@ -89,9 +81,10 @@ public class Biblioteca {
 
     //Método que nos muestra los datos de todos los libros que hay registrados en el catálogo
     public void mostrarTodosLibrosCatalogo(){
+        System.out.println("El catálogo tiene actualmente "+consultarNumeroLibrosCatalogo()+" libros");
         System.out.println("Estos son los libros:");
         System.out.println();
-        for (Libro item: getCatalogo().listaLibros)
+        for (T item: getCatalogo().listaLibros)
         {
             item.mostrarDatos();
             System.out.println();
@@ -100,12 +93,12 @@ public class Biblioteca {
 
     /*Método que agrega un libro al catálogo pasado por parámetro siempre que haya espacio en el mismo, para lo cual nos apoyamos de un try-catch que nos permitirá captar un posible error
     de índice de array fuera de los límites del mismo si intentamos añadir un libro a un catálogo que ya tiene todas sus posiciones ocupadas*/
-    public void agregarLibro(Libro libro) {
+    public void agregarLibro(T libro,int numeroLibros) {
 
         try{
+            Object[]arrayCatalogo=new Object[numeroLibros];
             arrayCatalogo[consultarNumeroLibrosCatalogo()]=libro;
             catalogo.listaLibros.add(libro);
-            System.out.println("Libro añadido al catálogo");
             }catch(ArrayIndexOutOfBoundsException e){
                 System.out.println("Capturando error deArrayIndexOutOfBoundsException");
                 System.out.println("No hay espacio en el catálogo para registrar más libros");
@@ -134,7 +127,7 @@ public class Biblioteca {
         Libro libroAux=null;
         boolean encontrado=false;
 
-        for (Libro item:catalogo.listaLibros)
+        for (T item:catalogo.listaLibros)
         {
                 if(item.getISBN().equalsIgnoreCase(ISBN))
                 {
@@ -167,7 +160,7 @@ public class Biblioteca {
     public boolean estaLibro(String ISBN)
     {
         boolean libroRegistrado=false;
-        for (Libro item: catalogo.listaLibros)
+        for (T item: catalogo.listaLibros)
         {
             if(item.getISBN().equalsIgnoreCase(ISBN))
             {
@@ -181,20 +174,17 @@ public class Biblioteca {
 
     /*Catalogo es clase anidada de Bibilioteca porque la primera no puede existir sin la segunda. Declaramos como único atributo el ArrayList de objetos tipo
      Libro que representará el catálogo que tenga la bibilioteca*/
-    class Catalogo{
+    class Catalogo {
 
-        ArrayList<Libro>listaLibros;
+        ArrayList<T>listaLibros;
         public Catalogo() {
-            this.listaLibros = new ArrayList<>();
+            this.listaLibros = new ArrayList<T>();
         }
 
-        public ArrayList<Libro> getListaLibros(){
-            return listaLibros;
-        }
-
-        public void setListaLibros(ArrayList<Libro> listaLibros) {
+        public void setListaLibros(ArrayList<T> listaLibros) {
             this.listaLibros = listaLibros;
         }
+
     }
 
 
@@ -246,7 +236,7 @@ public class Biblioteca {
 
         try {
             objectInputStream=new ObjectInputStream(new FileInputStream(file));
-            catalogo.listaLibros= (ArrayList<Libro>) objectInputStream.readObject();
+            catalogo.listaLibros= (ArrayList<T>) objectInputStream.readObject();
             for (Libro item:catalogo.listaLibros)
             {
                 System.out.println(item);

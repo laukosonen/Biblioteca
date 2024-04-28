@@ -61,7 +61,8 @@ public abstract class Libro implements Serializable {
         System.out.println("Número de páginas = " + numeroPaginas);
     }
 
-    /*Creo el método toString para que el objeto Libro pueda ser representado en formato JSON */
+    /*Creo el método toString para que el objeto Libro pueda ser representado en formato JSON. Esto lo aplicaremos también a las clases
+    * que heredan de ésta (Terror, Comedia y Policiaca) */
     @Override
     public String toString() {
         return "Libro{" +

@@ -14,8 +14,14 @@ public class Entrada {
         boolean repetirPrimerMenu=false;
         boolean numeroValido=false;
 
-        //Creamos una biblioteca y cuatro libros como nos pide el enunciado
-        Biblioteca biblioteca=new Biblioteca("Gloria Fuertes","Javier López");
+        /*Creamos cuatro bibliotecas,una para cada tipo de opción de biblioteca que podrá crear el usuario (genérica, sólo de Terror,sólo
+        de Comedia o sólo Policíaca).Inicialmente sin datos.*/
+        Biblioteca<Libro> a = new Biblioteca<Libro>();
+        Biblioteca<Terror> b = new Biblioteca<Terror>();
+        Biblioteca<Comedia> c = new Biblioteca<Comedia>();
+        Biblioteca<Policiaca> d = new Biblioteca<Policiaca>();
+
+        //Creamos 4 libros como nos pide el enunciado
         Terror libro1=new Terror("Dracula","Bram Stoker","1111A",488,"novela vampírica");
         Terror libro2=new Terror("Terrores nocturnos","Emma Entrena","2222A",224,"juvenil");
         Comedia libro3=new Comedia("Yo,Tu,Éx","Miguel Ángel Bargueño","3333A",336,"humor inteligente");
@@ -61,13 +67,51 @@ public class Entrada {
                 }
                 System.out.println();
 
-            //Dentro del siguiente else-if entra lo referente a la gestión del catálogo
+            /*A contnuación se le pregunta al usuario por el tipo de biblioteca que quiere crear y, en función de la opción elegida
+            * inicializamos la biblioteca concreta ya con datos concretos y dejamos a nulas el resto de tipos de bibliotecas*/
             } else if (menuPrincipal==2)
             {
                 repetirPrimerMenu=true;
+                System.out.println("¿Qué tipo de biblioteca quieres crear?");
+                System.out.println("1. Genérica");
+                System.out.println("2. Género Terror");
+                System.out.println("3. Género Comedia");
+                System.out.println("4. Género Policiaca");
+                Scanner scan=new Scanner(System.in);
+                int tipoBiblioteca=scan.nextInt();
                 System.out.println("Creando biblioteca...");
                 System.out.println("Has creado la siguiente biblioteca:");
-                biblioteca.mostrarDatos();
+                if(tipoBiblioteca==1){
+                    a=new Biblioteca<Libro>("Gloria Fuertes","Javier López");
+                    b=null;
+                    c=null;
+                    d=null;
+                    a.mostrarDatos();
+                }
+                else if(tipoBiblioteca==2){
+                    b=new Biblioteca<Terror>("Biblioteca Terror","María López");
+                    a=null;
+                    c=null;
+                    d=null;
+                    b.mostrarDatos();
+
+                }
+                else if(tipoBiblioteca==3){
+                    c=new Biblioteca<Comedia>("Biblioteca Comedia","Francisco Pérez");
+                    a=null;
+                    b=null;
+                    d=null;
+                    c.mostrarDatos();
+                }
+                else{
+                    d=new Biblioteca<Policiaca>("Biblioteca Policiaca","Ana Ramírez");
+                    a=null;
+                    b=null;
+                    c=null;
+                    d.mostrarDatos();
+                }
+
+
                 System.out.println();
                 //Incluimos el siguiente do-while para volver a este punto en caso de que el usuario introduzca una respuesta no válida
                     do{
@@ -96,7 +140,16 @@ public class Entrada {
                                 }
                                 else
                                 {
-                                    biblioteca.construirCatalogo(numeroLibros);
+                                   if(tipoBiblioteca==1){
+                                       a.construirCatalogo(numeroLibros);
+                                   }
+                                   else if(tipoBiblioteca==2){
+                                       b.construirCatalogo(numeroLibros);
+                                   } else if (tipoBiblioteca==3) {
+                                       c.construirCatalogo(numeroLibros);
+                                   }else{
+                                       d.construirCatalogo(numeroLibros);
+                                   }
                                 }
                                 }while(!numeroValido);
 
@@ -107,22 +160,35 @@ public class Entrada {
                 *  Biblioteca (linea 103) */
                             try{
                                 Libro[]arrayCatalogoLibros=new Libro[numeroLibros];
-                                arrayCatalogoLibros[0]=libro1;
-                                biblioteca.registroLibrosIniciales(libro1);
-                                arrayCatalogoLibros[1]=libro2;
-                                biblioteca.registroLibrosIniciales(libro2);
-                                arrayCatalogoLibros[2]=libro2;
-                                biblioteca.registroLibrosIniciales(libro3);
-                                arrayCatalogoLibros[3]=libro2;
-                                biblioteca.registroLibrosIniciales(libro4);
-                                arrayCatalogoLibros= biblioteca.getArrayCatalogo();
-
+                                if(tipoBiblioteca==1){
+                                    arrayCatalogoLibros[0]=libro1;
+                                    a.agregarLibro(libro1,numeroLibros);
+                                    arrayCatalogoLibros[1]=libro2;
+                                    a.agregarLibro(libro2,numeroLibros);
+                                    arrayCatalogoLibros[2]=libro3;
+                                    a.agregarLibro(libro3,numeroLibros);
+                                    arrayCatalogoLibros[3]=libro4;
+                                    a.agregarLibro(libro4,numeroLibros);
+                                }
+                                else if(tipoBiblioteca==2){
+                                    arrayCatalogoLibros[0]=libro1;
+                                    arrayCatalogoLibros[1]=libro2;
+                                    b.agregarLibro(libro1,numeroLibros);
+                                    b.agregarLibro(libro2,numeroLibros);
+                                } else if (tipoBiblioteca==3) {
+                                    arrayCatalogoLibros[2]=libro3;
+                                    c.agregarLibro(libro3,numeroLibros);
+                                }else{
+                                    arrayCatalogoLibros[3]=libro4;
+                                    d.agregarLibro(libro4,numeroLibros);
+                                }
                                 }catch(ArrayIndexOutOfBoundsException e)
                                 {
                                     System.out.println("Capturando error ArrayIndexOutOfBoundsException");
                                     System.out.println("No hay suficiente espacio en el catálogo para el registro de los 4 primeros libros");
                                     System.out.println();
                                 }
+
                         }
                         else if (!respuesta.equalsIgnoreCase("NO"))
                         {
@@ -144,6 +210,7 @@ public class Entrada {
                             System.out.println("4. Buscar un libro en el catálogo");
                             int operacion=scanner.nextInt();
                             Libro libro=null;
+                            Scanner scanner1=new Scanner(System.in);
 
                             /*Incluimos aquí un try-catch para captar un posible error RunTime en el caso de que se quiera hacer alguna función del catálogo
                             * sin que éste exista  */
@@ -151,8 +218,8 @@ public class Entrada {
                                     switch (operacion)
                                     {
                                         case 1:
-                                            System.out.println("El catálogo de esta bibilioteca tiene actualmente "+biblioteca.consultarNumeroLibrosCatalogo()+" libros");
-                                            biblioteca.mostrarTodosLibrosCatalogo();
+                                            bibliotecaExistente(a,b,c,d).consultarNumeroLibrosCatalogo();
+                                            bibliotecaExistente(a,b,c,d).mostrarTodosLibrosCatalogo();
                                             break;
 
                                         case 2:
@@ -161,12 +228,21 @@ public class Entrada {
                                             /*Usamos un switch para los tres tipos de género de libro. En cada uno se pedirán los datos del libro a registrar
                                             y se creará un nuevo objeto tipo género correspondiente (Terror, comedia o policiaca) del libro*/
                                             do {
-                                                System.out.println("Indica el género del libro:");
-                                                System.out.println("Terror: 1");
-                                                System.out.println("Comedia: 2");
-                                                System.out.println("Policiaca: 3");
+                                                if(bibliotecaExistente(a,b,c,d)==b){
+                                                    System.out.println("Pulsa 1 para agregar un libro de Terror");
+                                                } else if (bibliotecaExistente(a,b,c,d)==c) {
+                                                    System.out.println("Pulsa 2 para agregar un libro de Comedia");
+                                                }
+                                                else if(bibliotecaExistente(a,b,c,d)==d) {
+                                                    System.out.println("Pulsa 3 para agregar una novela policíaca");
+                                                }else{
+                                                    System.out.println("Indica el género del libro:");
+                                                    System.out.println("Terror: 1");
+                                                    System.out.println("Comedia: 2");
+                                                    System.out.println("Policiaca: 3");
+                                                }
+
                                                 int genero = scanner.nextInt();
-                                                Scanner scanner1=new Scanner(System.in);
                                                 switch (genero)
                                                 {
                                                     case 1:
@@ -192,15 +268,14 @@ public class Entrada {
                                                         libro = new Policiaca();
                                                         pedirDatosComunes(libro);
                                                         System.out.println("Trama (misterio o intriga):");
-                                                        Trama trama = Trama.valueOf(scanner1.next());
+                                                        Trama trama = Trama.valueOf(scanner.next());
                                                         System.out.println("¿Cuántos personajes tiene el libro?");
-                                                        int numeroPersonajes = scanner1.nextInt();
+                                                        int numeroPersonajes = scanner.nextInt();
                                                         String[] arrayPersonajes = new String[numeroPersonajes];
                                                         for (int i = 0; i < numeroPersonajes; i++)
                                                         {
                                                             System.out.println("Introduce el nombre del personaje " + (i + 1) + ":");
-                                                            Scanner scanner2=new Scanner(System.in);
-                                                            String nombre = scanner2.nextLine();
+                                                            String nombre = scanner1.nextLine();
                                                             arrayPersonajes[i] = nombre;
                                                         }
                                                         libro = new Policiaca(libro.getTitulo(), libro.getAutor(), libro.getISBN(), libro.getNumeroPaginas(), trama, arrayPersonajes);
@@ -215,11 +290,13 @@ public class Entrada {
 
                                             /*Establecemos un if-else para que se agregue el libro al arrayList del catálogo y al arrayList de libros sin catálogo
                                             * en caso de que el ISBN no se encuentre en el catálogo; en caso contrario no se agregará nada    */
-                                            if (!biblioteca.estaLibro(libro.getISBN()))
+
+                                            if (!bibliotecaExistente(a,b,c,d).estaLibro(libro.getISBN()))
                                             {
-                                                biblioteca.agregarLibro(libro);
+                                                bibliotecaExistente(a,b,c,d).agregarLibro(libro,numeroLibros);
                                                 librosSinBiblioteca.add(libro);
-                                            } else
+                                            }
+                                            else
                                             {
                                                 System.out.println("Ya hay un libro con este ISBN registrado en el catálogo");
                                             }
@@ -228,20 +305,17 @@ public class Entrada {
                                     case 3:
                                         System.out.println("¿Qué libro quieres sacar?  Indica el ISBN:");
                                         String ISBN = scanner.next();
-                                        if (biblioteca.estaLibro(ISBN))
-                                        {
-                                            biblioteca.sacarLibro(ISBN);
+                                        if (bibliotecaExistente(a,b,c,d).estaLibro(ISBN)) {
+                                            bibliotecaExistente(a,b,c,d).sacarLibro(ISBN);
                                             System.out.println("El libro con ISBN " + ISBN + " se ha sacado correctamente del catálogo");
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             System.out.println("El libro con el ISBN introducido no está en el catálogo");
                                         }
                                         break;
                                     case 4:
                                         System.out.println("¿Qué libro quieres buscar?  Indica el ISBN:");
                                         ISBN = scanner.next();
-                                        biblioteca.buscarLibro(ISBN);
+                                        bibliotecaExistente(a,b,c,d).buscarLibro(ISBN);
                                         break;
                                     default:
                                         System.out.println("La opción introducida no es válida");
@@ -275,10 +349,10 @@ public class Entrada {
 
         System.out.println("Se va a realizar la lectura del fichero de libros creado a partir del último catálogo...");
     try{
-        biblioteca.escrituraObjeto();
-        System.out.println();
-        biblioteca.lecturaObjeto();
-        }catch(NullPointerException e)
+            bibliotecaExistente(a,b,c,d).escrituraObjeto();
+            System.out.println();
+            bibliotecaExistente(a,b,c,d).lecturaObjeto();
+    }catch(NullPointerException e)
         {
             System.out.println("Error de nulo");
             System.out.println("No se ha creado ningún catálogo por tanto no se puede crear ningún fichero de libros ");
@@ -351,4 +425,25 @@ public class Entrada {
             }while(!respuestaValida);
             return false;
     }
+    /*El siguiente método ha sido creado para reducir el número de lineas de código dentro del main cada vez que se necesita conocer el
+    * tipo de biblioteca creada para poder realizar las funcionalidades de la misma  */
+    public static Biblioteca bibliotecaExistente(Biblioteca a,Biblioteca b,Biblioteca c,Biblioteca d){
+
+        if(b==null&& c==null && d==null)
+        {
+            return a;
+        }
+        else if(a==null&& c==null && d==null)
+        {
+            return b;
+        }
+        else if(a==null&& b==null && d==null)
+        {
+            return c;
+        }
+        else{
+            return d;
+        }
+    }
+
 }
